@@ -9,6 +9,10 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 import logo from '../assets/logoSoftwareControlSalud-transformed.png'; // adjust the path as necessary
 
 const theme = createTheme();
@@ -80,14 +84,19 @@ export default function RegisterPage() {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="gender"
-                  label="Género"
-                  name="gender"
-                  autoComplete="gender"
-                />
+                <FormControl fullWidth required>
+                  <InputLabel id="gender-label">Género</InputLabel>
+                  <Select
+                    labelId="gender-label"
+                    id="gender"
+                    name="gender"
+                    label="Género"
+                    defaultValue=""
+                  >
+                    <MenuItem value="masculino">Masculino</MenuItem>
+                    <MenuItem value="femenino">Femenino</MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <TextField
@@ -133,8 +142,8 @@ export default function RegisterPage() {
             </Button>
             <Grid container>
               <Grid item>
-                <Link href="#" variant="body2">
-                  {"Tengo una cuenta"}
+                <Link href="login" variant="body2">
+                  {"Ya tengo una cuenta. Iniciar sesión"}
                 </Link>
               </Grid>
             </Grid>

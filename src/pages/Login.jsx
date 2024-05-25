@@ -72,7 +72,7 @@ export default function LoginPage() {
             </Button>
             <Grid container>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="register" variant="body2">
                   {"¿No se encuentra registrado?"}
                 </Link>
               </Grid>

@@ -70,7 +70,7 @@ export default function ChildProfileForm({ onSubmit }) {
       >
         <MenuItem value="male">Masculino</MenuItem>
         <MenuItem value="female">Femenino</MenuItem>
-        <MenuItem value="other">Otro</MenuItem>
+        
       </TextField>
       <Button type="submit" variant="contained" color="primary">
         Crear Perfil

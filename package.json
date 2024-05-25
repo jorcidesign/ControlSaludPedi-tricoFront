@@ -18,13 +18,17 @@
     "@mui/system": "^5.15.15",
     "@mui/x-charts": "^7.5.1",
     "@mui/x-date-pickers": "^7.5.1",
+    "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.3",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.11",
+    "md5": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "styled-components": "^6.1.11"
+    "react-router-dom": "^6.23.1",
+    "styled-components": "^6.1.11",
+    "universal-cookie": "^7.1.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

@@ -4,22 +4,16 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+import AddIcon from '@mui/icons-material/Add';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
 
-export default function MenuAppBar( {pageTitle} ) {
-    const drawerWidth = 240;
-  const [auth, setAuth] = React.useState(true);
+export default function MenuAppBar({ pageTitle }) {
+  const drawerWidth = 240;
   const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleChange = (event) => {
-    setAuth(event.target.checked);
-  };
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -29,37 +23,31 @@ export default function MenuAppBar( {pageTitle} ) {
     setAnchorEl(null);
   };
 
+  // Simulación de variables para tener perfiles registrados
+  const hasProfile = true;
+  const profiles = ["Pedro", "María"]; // Lista de perfiles de hijos registrados
+
   return (
     <Box sx={{ flexGrow: 1 }}>
-      {/* <FormGroup>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={auth}
-              onChange={handleChange}
-              aria-label="login switch"
-            />
-          }
-          label={auth ? 'Logout' : 'Login'}
-        />
-      </FormGroup> */}
       <AppBar position="fixed" sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}>
         <Toolbar>
-          
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            {pageTitle} {/* Mostrar el título dinámicamente */}
+            {pageTitle}
           </Typography>
-          {auth && (
+          {hasProfile ? (
             <div>
               <IconButton
                 size="large"
-                aria-label="account of current user"
+                aria-label="current profile"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
                 onClick={handleMenu}
                 color="inherit"
               >
                 <AccountCircle />
+                <Typography variant="body1" sx={{ ml: 1 }}>
+                  {profiles[0]} {/* Nombre del perfil del primer hijo registrado */}
+                </Typography>
               </IconButton>
               <Menu
                 id="menu-appbar"
@@ -76,10 +64,20 @@ export default function MenuAppBar( {pageTitle} ) {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
+                {profiles.map((profile) => (
+                  <MenuItem key={profile} onClick={() => handleProfileChange(profile)}>
+                    {profile}
+                  </MenuItem>
+                ))}
+                <MenuItem component={Link} to="/agregar-perfil-hijo" onClick={handleClose}>
+                  + Agregar perfil
+                </MenuItem>
               </Menu>
             </div>
+          ) : (
+            <Button component={Link} to="/agregar-perfil-hijo" variant="outlined" color="inherit" startIcon={<AddIcon />}>
+              Agregar Perfil
+            </Button>
           )}
         </Toolbar>
       </AppBar>
