@@ -6,6 +6,7 @@ import Toolbar from "@mui/material/Toolbar";
 import PermanentDrawerLeft from "../components/common/Sidebar";
 import MenuAppBar from "../components/common/Header";
 import ModifyParentAccountForm from "../components/forms/ModificarCuentaUsuarioPadre";
+import LineDataset from "../components/charts/GraficoIMC";
 
 export default function IMC() {
   return (
@@ -20,6 +21,7 @@ export default function IMC() {
         >
           <Toolbar />
           {/* <ModifyParentAccountForm/> */}
+          <LineDataset/>
         </Box>
       </Box>
     </Box>

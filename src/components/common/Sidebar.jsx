@@ -18,6 +18,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logoSoftwareControlSalud-transformed.png'; // Ajusta la ruta según sea necesario
+import { useLogout } from '../../hooks/useLogout'; // Importa el hook
 
 const drawerWidth = 240;
 
@@ -49,6 +50,7 @@ const theme = createTheme({
 });
 
 export default function PermanentDrawerLeft() {
+  const logout = useLogout();
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -120,7 +122,7 @@ export default function PermanentDrawerLeft() {
             </ListItemButton>
           </ListItem>
           <ListItem key="Cerrar Sesión" disablePadding>
-            <ListItemButton component={Link} to="/login">
+            <ListItemButton onClick={logout}>
               <ListItemIcon>
                 <ExitToAppIcon style={{ color: 'red' }} />
               </ListItemIcon>

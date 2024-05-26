@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React from 'react';
+import axios from 'axios'; // Import Axios
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -17,19 +18,33 @@ import logo from '../assets/logoSoftwareControlSalud-transformed.png'; // adjust
 
 const theme = createTheme();
 
-export default function RegisterPage() {
-  const handleSubmit = (event) => {
+const RegisterPage = () => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      firstName: data.get('firstName'),
-      lastName: data.get('lastName'),
-      dni: data.get('dni'),
-      gender: data.get('gender'),
-      birthDate: data.get('birthDate'),
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const userData = {
+      usuario: {
+        email: data.get('email'),
+        contrasena: data.get('password'),
+        perfilPaciente: [],
+        padre: {
+          nombre: data.get('firstName'),
+          apellido: data.get('lastName'),
+          dni: data.get('dni'),
+          genero: data.get('gender') === 'masculino' ? 'M' : 'F',
+          fechaNacimiento: `\/Date(${new Date(data.get('birthDate')).getTime()})\/`
+        }
+      }
+    };
+
+    try {
+      const response = await axios.post('http://localhost:54160/Service.svc/RegistrarUsuario', userData);
+      console.log('Respuesta del servidor:', response.data);
+      // Aquí puedes manejar la respuesta del servidor como lo desees
+    } catch (error) {
+      console.error('Error al enviar la solicitud:', error);
+      // Puedes manejar el error de la solicitud aquí
+    }
   };
 
   return (
@@ -153,3 +168,5 @@ export default function RegisterPage() {
     </ThemeProvider>
   );
 }
+
+export default RegisterPage;

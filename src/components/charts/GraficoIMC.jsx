@@ -497,29 +497,36 @@ const worldElectricityProduction = [
     coal: 10190.71,
   },
 ];
+const datos = [
 
+]
+const imc_boys = [
+  {"year": 0.1, "valor_optim": 13.4, "valor_intermedio1": 14.4, "valor_intermedio2": 15.4, "valor_malo1": 16.5, "valor_malo2": 18.0},
+    {"year": 0.5, "valor_optim": 16.6, "valor_intermedio1": 17.6, "valor_intermedio2": 18.6, "valor_malo1": 19.5, "valor_malo2": 21.0},
+    {"year": 1, "valor_optim": 17.3, "valor_intermedio1": 18.3, "valor_intermedio2": 19.3, "valor_malo1": 20.4, "valor_malo2": 22.0},
+    {"year": 2, "valor_optim": 17.5, "valor_intermedio1": 18.5, "valor_intermedio2": 19.5, "valor_malo1": 20.6, "valor_malo2": 22.2},
+    {"year": 3, "valor_optim": 17.2, "valor_intermedio1": 18.2, "valor_intermedio2": 19.2, "valor_malo1": 20.3, "valor_malo2": 21.9},
+    {"year": 4, "valor_optim": 16.8, "valor_intermedio1": 17.8, "valor_intermedio2": 18.8, "valor_malo1": 19.9, "valor_malo2": 21.4},
+    {"year": 5, "valor_optim": 16.4, "valor_intermedio1": 17.4, "valor_intermedio2": 18.4, "valor_malo1": 19.5, "valor_malo2": 21.0},
+    {"year": 6, "valor_optim": 16.0, "valor_intermedio1": 17.0, "valor_intermedio2": 18.0, "valor_malo1": 19.1, "valor_malo2": 20.6},
+    {"year": 7, "valor_optim": 15.8, "valor_intermedio1": 16.8, "valor_intermedio2": 17.8, "valor_malo1": 18.9, "valor_malo2": 20.4},
+    {"year": 8, "valor_optim": 15.6, "valor_intermedio1": 16.6, "valor_intermedio2": 17.6, "valor_malo1": 18.7, "valor_malo2": 20.2},
+    {"year": 9, "valor_optim": 15.4, "valor_intermedio1": 16.4, "valor_intermedio2": 17.4, "valor_malo1": 18.5, "valor_malo2": 20.0},
+    {"year": 10, "valor_optim": 15.3, "valor_intermedio1": 16.3, "valor_intermedio2": 17.3, "valor_malo1": 18.4, "valor_malo2": 19.9},
+    {"year": 11, "valor_optim": 15.3, "valor_intermedio1": 16.3, "valor_intermedio2": 17.3, "valor_malo1": 18.4, "valor_malo2": 19.9},
+    {"year": 12, "valor_optim": 15.4, "valor_intermedio1": 16.4, "valor_intermedio2": 17.4, "valor_malo1": 18.5, "valor_malo2": 20.0}
+]
 const keyToLabel = {
-  coal: 'Electricity from coal (TWh)',
-  gas: 'Electricity from gas (TWh)',
-  oil: 'Electricity from oil (TWh)',
-  nuclear: 'Electricity from nuclear (TWh)',
-  hydro: 'Electricity from hydro (TWh)',
-  wind: 'Electricity from wind (TWh)',
-  solar: 'Electricity from solar (TWh)',
-  bio: 'Electricity from bioenergy (TWh)',
-  other: 'Other renewables excluding bioenergy (TWh)',
+  
+  malo: 'valor malo',
+  intermedio: 'valor intermedio',
+  optimo: 'valor optimo',
 };
 
 const colors = {
-  other: 'lightgray',
-  bio: 'lightgreen',
-  solar: 'yellow',
-  wind: 'lightblue',
-  hydro: 'blue',
-  nuclear: 'orange',
-  oil: 'darkgrey',
-  gas: 'gray',
-  coal: 'black',
+  optimo: 'green',
+  intermedio: 'yellow',
+  malo: 'orange',
 };
 
 const stackStrategy = {
@@ -529,7 +536,7 @@ const stackStrategy = {
 };
 
 const customize = {
-  height: 300,
+  height: 500,
   legend: { hidden: true },
   margin: { top: 5 },
   stackingOrder: 'descending',
@@ -542,8 +549,8 @@ export default function LineDataset() {
         {
           dataKey: 'year',
           valueFormatter: (value) => value.toString(),
-          min: 1985,
-          max: 2022,
+          min: 0,
+          max: 12,
         },
       ]}
       series={Object.keys(keyToLabel).map((key) => ({
@@ -553,7 +560,7 @@ export default function LineDataset() {
         showMark: false,
         ...stackStrategy,
       }))}
-      dataset={worldElectricityProduction}
+      dataset={imc_boys}
       {...customize}
     />
   );

@@ -8,23 +8,24 @@ import Login from './pages/Login';
 import ModificarPerfilHijo from './pages/ModificarPerfilHijo';
 import PesoTalla from './pages/PesoTalla';
 import Register from './pages/Register';
+import ProtectedRoute from './hooks/ProtectedRoute';
+import PublicRoute from './hooks/PublicRoute';  // Importa el nuevo hook
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/agregar-perfil-hijo" element={<AgregarPerfilHijo />} />
-        <Route path="/config-cuenta-padre" element={<ConfigCuentaPadre />} />
-        <Route path="/imc" element={<IMC />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/modificar-perfil-hijo" element={<ModificarPerfilHijo />} />
-        <Route path="/peso-talla" element={<PesoTalla />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+        <Route path="/agregar-perfil-hijo" element={<ProtectedRoute><AgregarPerfilHijo /></ProtectedRoute>} />
+        <Route path="/config-cuenta-padre" element={<ProtectedRoute><ConfigCuentaPadre /></ProtectedRoute>} />
+        <Route path="/imc" element={<ProtectedRoute><IMC /></ProtectedRoute>} />
+        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />  {/* Usa PublicRoute */}
+        <Route path="/modificar-perfil-hijo" element={<ProtectedRoute><ModificarPerfilHijo /></ProtectedRoute>} />
+        <Route path="/peso-talla" element={<ProtectedRoute><PesoTalla /></ProtectedRoute>} />
+        <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />  {/* Usa PublicRoute */}
       </Routes>
     </Router>
   );
 }
 
 export default App;
-

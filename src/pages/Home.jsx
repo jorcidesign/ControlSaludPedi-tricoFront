@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -7,17 +7,23 @@ import PermanentDrawerLeft from "../components/common/Sidebar";
 import MenuAppBar from "../components/common/Header";
 import { Link } from "react-router-dom";
 import { Typography } from "@mui/material";
-
-// Datos simulados para el ejemplo
-const user = {
-  nombre: "Juan",
-//   perfilHijo: {
-//     nombre: "Pedro",
-//   },
-    perfilHijo: null,// Cambia a null si no hay perfil de hijo creado
-};
+import Cookies from 'universal-cookie'; // Importa universal-cookie
 
 export default function Home() {
+  const [user, setUser] = useState(null);
+  const cookies = new Cookies(); // Mueve esta línea fuera del useEffect
+
+  useEffect(() => {
+    const userData = cookies.get('user');
+    if (userData) {
+      setUser(userData.padre);
+    }
+  }, []); // Asegúrate de que el arreglo de dependencias esté vacío
+
+  if (!user) {
+    return <div>Cargando...</div>;
+  }
+
   const { nombre, perfilHijo } = user;
 
   return (
