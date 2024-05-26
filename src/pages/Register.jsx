@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,23 +13,35 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
-import logo from '../assets/logoSoftwareControlSalud-transformed.png'; // adjust the path as necessary
+import logo from '../assets/logoSoftwareControlSalud-transformed.png'; // ajusta la ruta según sea necesario
+// import { registrarUsuario } from '../services/api'; // ajusta la ruta según sea necesario
 
 const theme = createTheme();
 
 export default function RegisterPage() {
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      firstName: data.get('firstName'),
-      lastName: data.get('lastName'),
-      dni: data.get('dni'),
-      gender: data.get('gender'),
-      birthDate: data.get('birthDate'),
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const usuarioData = {
+      usuario: {
+        email: data.get('email'),
+        contrasena: data.get('password'),
+        padre: {
+          nombre: data.get('firstName'),
+          apellido: data.get('lastName'),
+          dni: data.get('dni'),
+          genero: data.get('gender'),
+          fechaNacimiento: data.get('birthDate'),
+        },
+      },
+    };
+
+    try {
+      const response = await registrarUsuario(usuarioData);
+      alert('Registro exitoso: ' + JSON.stringify(response));
+    } catch (error) {
+      alert('Error registrando usuario: ' + error.message);
+    }
   };
 
   return (
@@ -93,8 +105,8 @@ export default function RegisterPage() {
                     label="Género"
                     defaultValue=""
                   >
-                    <MenuItem value="masculino">Masculino</MenuItem>
-                    <MenuItem value="femenino">Femenino</MenuItem>
+                    <MenuItem value="M">Masculino</MenuItem>
+                    <MenuItem value="F">Femenino</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
