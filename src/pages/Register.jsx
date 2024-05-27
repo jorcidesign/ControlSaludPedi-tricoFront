@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,35 +14,60 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
-import logo from '../assets/logoSoftwareControlSalud-transformed.png'; // ajusta la ruta según sea necesario
-// import { registrarUsuario } from '../services/api'; // ajusta la ruta según sea necesario
+import logo from '../assets/logoSoftwareControlSalud-transformed.png';
+import { registrarUsuario } from '../services/api';
 
 const theme = createTheme();
 
+
 export default function RegisterPage() {
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const usuarioData = {
+    const userData = {
       usuario: {
         email: data.get('email'),
         contrasena: data.get('password'),
+        perfilPaciente: [],
         padre: {
           nombre: data.get('firstName'),
           apellido: data.get('lastName'),
           dni: data.get('dni'),
-          genero: data.get('gender'),
-          fechaNacimiento: data.get('birthDate'),
-        },
-      },
+          genero: data.get('gender') === 'masculino' ? 'M' : 'F',
+          fechaNacimiento: data.get('birthDate') // Ensure it's in the format YYYY-MM-DD
+        }
+      }
     };
 
     try {
-      const response = await registrarUsuario(usuarioData);
-      alert('Registro exitoso: ' + JSON.stringify(response));
+      console.log("entro al try del register");
+      
+      // console.log('Respuesta del servidor:', response);
+
+      // if (response && response.Success) {
+      //   // Redirige al usuario a la página de login después de un registro exitoso
+      //   navigate('/login');
+      // } else {
+      //   // Si la respuesta no tiene Success, lanza un error
+      //   throw new Error('Datos de registro incorrectos');
+      // }
     } catch (error) {
-      alert('Error registrando usuario: ' + error.message);
+      console.error('Error al enviar la solicitud:', error.message);
+      setError('Error al registrar usuario');
+      setOpen(true);
     }
+  };
+
+  // Handle closing the Snackbar
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
   };
 
   return (
@@ -105,8 +131,8 @@ export default function RegisterPage() {
                     label="Género"
                     defaultValue=""
                   >
-                    <MenuItem value="M">Masculino</MenuItem>
-                    <MenuItem value="F">Femenino</MenuItem>
+                    <MenuItem value="masculino">Masculino</MenuItem>
+                    <MenuItem value="femenino">Femenino</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -161,6 +187,8 @@ export default function RegisterPage() {
             </Grid>
           </Box>
         </Box>
+        
+        
       </Container>
     </ThemeProvider>
   );
