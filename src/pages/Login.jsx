@@ -1,6 +1,8 @@
-import * as React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -10,14 +12,21 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import logo from '../assets/logoSoftwareControlSalud-transformed.png';
 import { iniciarSesion } from '../services/api';
 import Cookies from 'universal-cookie';
+import md5 from 'crypto-js/md5';
 
 const theme = createTheme();
+
+// Schema de validación con Yup
+const validationSchema = Yup.object().shape({
+  email: Yup.string().email('El email es inválido').required('El email es obligatorio'),
+  password: Yup.string().required('La contraseña es obligatoria')
+});
 
 export default function LoginPage() {
   const [error, setError] = useState(null);
@@ -25,19 +34,22 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const cookies = new Cookies();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const email = data.get('email');
-    const password = data.get('password');
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(validationSchema)
+  });
+
+  const onSubmit = async (data) => {
     console.log("entro al handle submit");
     try {
       console.log("entro al try del login");
 
-      const response = await iniciarSesion(email, password);
+      const response = await iniciarSesion(data.email, data.password);
       console.log(response.Usuario);
       
       if (response && response.Usuario) {
+        // Encripta la contraseña
+        response.Usuario.contrasena = md5(response.Usuario.contrasena).toString();
+
         // Guarda la información del usuario en cookies
         cookies.set('user', response.Usuario, { path: '/' });
 
@@ -80,7 +92,7 @@ export default function LoginPage() {
           <Typography component="h1" variant="h5">
             Iniciar Sesión
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -90,6 +102,9 @@ export default function LoginPage() {
               name="email"
               autoComplete="email"
               autoFocus
+              {...register('email')}
+              error={!!errors.email}
+              helperText={errors.email?.message}
             />
             <TextField
               margin="normal"
@@ -100,6 +115,9 @@ export default function LoginPage() {
               type="password"
               id="password"
               autoComplete="current-password"
+              {...register('password')}
+              error={!!errors.password}
+              helperText={errors.password?.message}
             />
             <Button
               type="submit"

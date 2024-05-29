@@ -1,5 +1,5 @@
-import React from 'react';
-import axios from 'axios'; // Import Axios
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,36 +14,84 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
-import logo from '../assets/logoSoftwareControlSalud-transformed.png'; // adjust the path as necessary
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
+import logo from '../assets/logoSoftwareControlSalud-transformed.png';
+import { registrarUsuario } from '../services/api';
+import { transformToWcfDate } from '../utils/helpers';
 
 const theme = createTheme();
 
-const RegisterPage = () => {
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+// Esquema de validación con Yup
+const validationSchema = Yup.object().shape({
+  firstName: Yup.string().required('El nombre es obligatorio'),
+  lastName: Yup.string().required('El apellido es obligatorio'),
+  dni: Yup.string().required('El DNI es obligatorio'),
+  gender: Yup.string().required('El género es obligatorio'),
+  birthDate: Yup.date().required('La fecha de nacimiento es obligatoria'),
+  email: Yup.string().email('El email es inválido').required('El email es obligatorio'),
+  password: Yup.string().required('La contraseña es obligatoria')
+});
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
+export default function RegisterPage() {
+  const { handleSubmit, control, formState: { errors } } = useForm({
+    resolver: yupResolver(validationSchema)
+  });
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const [severity, setSeverity] = useState('success');
+  const navigate = useNavigate();
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
+  const onSubmit = async (data) => {
     const userData = {
       usuario: {
-        email: data.get('email'),
-        contrasena: data.get('password'),
+        email: data.email,
+        contrasena: data.password,
         perfilPaciente: [],
         padre: {
-          nombre: data.get('firstName'),
-          apellido: data.get('lastName'),
-          dni: data.get('dni'),
-          genero: data.get('gender') === 'masculino' ? 'M' : 'F',
-          fechaNacimiento: `\/Date(${new Date(data.get('birthDate')).getTime()})\/`
+          nombre: data.firstName,
+          apellido: data.lastName,
+          dni: data.dni,
+          genero: data.gender === 'masculino' ? 'M' : 'F',
+          fechaNacimiento: transformToWcfDate(data.birthDate) // Transforma la fecha al formato \/Date(...)\/
         }
       }
     };
 
     try {
-      const response = await axios.post('http://localhost:54160/Service.svc/RegistrarUsuario', userData);
-      console.log('Respuesta del servidor:', response.data);
-      // Aquí puedes manejar la respuesta del servidor como lo desees
+      const response = await registrarUsuario(userData);
+
+      if (response && response.Success) {
+        setMessage('Usuario registrado con éxito. Redirigiendo a la página de inicio de sesión...');
+        setSeverity('success');
+        setOpen(true);
+
+        // Esperar 1 segundo antes de redirigir
+        setTimeout(() => {
+          navigate('/login');
+        }, 1000);
+      } else {
+        throw new Error('Datos de registro incorrectos');
+      }
     } catch (error) {
-      console.error('Error al enviar la solicitud:', error);
-      // Puedes manejar el error de la solicitud aquí
+      setMessage(`Error: ${error.message}`);
+      setSeverity('error');
+      setOpen(true);
+      console.error('Error al enviar la solicitud:', error.message);
     }
   };
 
@@ -65,85 +113,132 @@ const RegisterPage = () => {
           <Typography component="h1" variant="h5">
             Regístrate
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
+                <Controller
                   name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="Nombre"
-                  autoFocus
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Nombre"
+                      autoComplete="given-name"
+                      error={!!errors.firstName}
+                      helperText={errors.firstName ? errors.firstName.message : ''}
+                    />
+                  )}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Apellido"
+                <Controller
                   name="lastName"
-                  autoComplete="family-name"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Apellido"
+                      autoComplete="family-name"
+                      error={!!errors.lastName}
+                      helperText={errors.lastName ? errors.lastName.message : ''}
+                    />
+                  )}
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="dni"
-                  label="DNI"
+                <Controller
                   name="dni"
-                  autoComplete="dni"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="DNI"
+                      autoComplete="dni"
+                      error={!!errors.dni}
+                      helperText={errors.dni ? errors.dni.message : ''}
+                    />
+                  )}
                 />
               </Grid>
               <Grid item xs={12}>
-                <FormControl fullWidth required>
+                <FormControl fullWidth required error={!!errors.gender}>
                   <InputLabel id="gender-label">Género</InputLabel>
-                  <Select
-                    labelId="gender-label"
-                    id="gender"
+                  <Controller
                     name="gender"
-                    label="Género"
+                    control={control}
                     defaultValue=""
-                  >
-                    <MenuItem value="masculino">Masculino</MenuItem>
-                    <MenuItem value="femenino">Femenino</MenuItem>
-                  </Select>
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        labelId="gender-label"
+                        id="gender"
+                        label="Género"
+                      >
+                        <MenuItem value="masculino">Masculino</MenuItem>
+                        <MenuItem value="femenino">Femenino</MenuItem>
+                      </Select>
+                    )}
+                  />
+                  {errors.gender && <p style={{ color: 'red' }}>{errors.gender.message}</p>}
                 </FormControl>
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="birthDate"
-                  label="Fecha de Nacimiento"
+                <Controller
                   name="birthDate"
-                  autoComplete="birthDate"
-                  type="date"
-                  InputLabelProps={{ shrink: true }}
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      type="date"
+                      label="Fecha de Nacimiento"
+                      InputLabelProps={{ shrink: true }}
+                      error={!!errors.birthDate}
+                      helperText={errors.birthDate ? errors.birthDate.message : ''}
+                    />
+                  )}
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email"
+                <Controller
                   name="email"
-                  autoComplete="email"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Email"
+                      autoComplete="email"
+                      error={!!errors.email}
+                      helperText={errors.email ? errors.email.message : ''}
+                    />
+                  )}
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
+                <Controller
                   name="password"
-                  label="Contraseña"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Contraseña"
+                      type="password"
+                      autoComplete="new-password"
+                      error={!!errors.password}
+                      helperText={errors.password ? errors.password.message : ''}
+                    />
+                  )}
                 />
               </Grid>
             </Grid>
@@ -164,9 +259,17 @@ const RegisterPage = () => {
             </Grid>
           </Box>
         </Box>
+        <Snackbar 
+          open={open} 
+          autoHideDuration={6000} 
+          onClose={handleClose} 
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <Alert onClose={handleClose} severity={severity} sx={{ width: '100%' }}>
+            {message}
+          </Alert>
+        </Snackbar>
       </Container>
     </ThemeProvider>
   );
 }
-
-export default RegisterPage;
