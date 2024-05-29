@@ -1,3 +1,4 @@
+// Home.js
 import React, { useEffect, useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -8,10 +9,12 @@ import MenuAppBar from "../components/common/Header";
 import { Link } from "react-router-dom";
 import { Typography } from "@mui/material";
 import Cookies from 'universal-cookie'; // Importa universal-cookie
+import { usePerfil } from "../contexts/PerfilContext";
 
 export default function Home() {
   const [user, setUser] = useState(null);
-  const cookies = new Cookies(); // Mueve esta línea fuera del useEffect
+  const { perfilActivo } = usePerfil();
+  const cookies = new Cookies(); // Instancia de cookies
 
   useEffect(() => {
     const userData = cookies.get('user');
@@ -24,7 +27,7 @@ export default function Home() {
     return <div>Cargando...</div>;
   }
 
-  const { nombre, perfilHijo } = user;
+  const { nombre } = user;
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -38,11 +41,11 @@ export default function Home() {
         >
           <Toolbar />
           <Box sx={{ p: 2 }}>
-            {perfilHijo ? (
+            {perfilActivo ? (
               <Typography variant="h5" gutterBottom>
                 Bienvenido, <span style={{ fontWeight: "bold" }}>{nombre}</span>
                 . Actualmente estás en el perfil de tu hij@:{" "}
-                <span style={{ fontWeight: "bold" }}>{perfilHijo.nombre}.</span>
+                <span style={{ fontWeight: "bold" }}>{perfilActivo.nombre}</span>.
               </Typography>
             ) : (
               <Typography variant="h5" gutterBottom>

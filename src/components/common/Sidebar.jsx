@@ -19,6 +19,9 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logoSoftwareControlSalud-transformed.png'; // Ajusta la ruta según sea necesario
 import { useLogout } from '../../hooks/useLogout'; // Importa el hook
+import Cookies from 'universal-cookie';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 const drawerWidth = 240;
 
@@ -51,6 +54,21 @@ const theme = createTheme({
 
 export default function PermanentDrawerLeft() {
   const logout = useLogout();
+  const cookies = new Cookies();
+  const profiles = cookies.get('perfiles') || [];
+  const [alertOpen, setAlertOpen] = React.useState(false);
+
+  const handleAlertClose = () => {
+    setAlertOpen(false);
+  };
+
+  const handleProtectedClick = (event) => {
+    if (profiles.length === 0) {
+      event.preventDefault();
+      setAlertOpen(true);
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -87,7 +105,7 @@ export default function PermanentDrawerLeft() {
             </ListItemButton>
           </ListItem>
           <ListItem key="Peso y Talla" disablePadding>
-            <ListItemButton component={Link} to="/peso-talla">
+            <ListItemButton component={Link} to="/peso-talla" onClick={handleProtectedClick}>
               <ListItemIcon>
                 <ScaleIcon />
               </ListItemIcon>
@@ -95,7 +113,7 @@ export default function PermanentDrawerLeft() {
             </ListItemButton>
           </ListItem>
           <ListItem key="Gráfico IMC" disablePadding>
-            <ListItemButton component={Link} to="/imc">
+            <ListItemButton component={Link} to="/imc" onClick={handleProtectedClick}>
               <ListItemIcon>
                 <BarChartIcon />
               </ListItemIcon>
@@ -106,7 +124,7 @@ export default function PermanentDrawerLeft() {
         <Divider />
         <List>
           <ListItem key="Perfil" disablePadding>
-            <ListItemButton component={Link} to="/modificar-perfil-hijo">
+            <ListItemButton component={Link} to="/modificar-perfil-hijo" onClick={handleProtectedClick}>
               <ListItemIcon>
                 <AccountBoxIcon />
               </ListItemIcon>
@@ -131,6 +149,11 @@ export default function PermanentDrawerLeft() {
           </ListItem>
         </List>
       </Drawer>
+      <Snackbar open={alertOpen} autoHideDuration={3000} onClose={handleAlertClose}>
+        <Alert onClose={handleAlertClose} severity="warning" sx={{ width: '100%' }}>
+          Aún no hay perfiles registrados
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }

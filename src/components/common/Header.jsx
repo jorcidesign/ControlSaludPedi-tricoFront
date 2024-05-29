@@ -9,11 +9,28 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Cookies from 'universal-cookie';
+import { usePerfil } from '../../contexts/PerfilContext';
 
 export default function MenuAppBar({ pageTitle }) {
   const drawerWidth = 240;
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [profiles, setProfiles] = React.useState([]);
+  const cookies = new Cookies();
+  const { perfilActivo, setPerfilActivo } = usePerfil();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const user = cookies.get('user');
+    const perfiles = cookies.get('perfiles');
+    const perfilActivoCookie = cookies.get('perfilActivo');
+
+    if (user && perfiles) {
+      setProfiles(perfiles);
+      setPerfilActivo(perfilActivoCookie || perfiles[0]);
+    }
+  }, [setPerfilActivo]);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -23,9 +40,12 @@ export default function MenuAppBar({ pageTitle }) {
     setAnchorEl(null);
   };
 
-  // Simulación de variables para tener perfiles registrados
-  const hasProfile = true;
-  const profiles = ["Pedro", "María"]; // Lista de perfiles de hijos registrados
+  const handleProfileChange = (profile) => {
+    setPerfilActivo(profile);
+    cookies.set('perfilActivo', profile, { path: '/' });
+    handleClose();
+    navigate('/'); // Redirige al home después de cambiar el perfil
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -34,7 +54,7 @@ export default function MenuAppBar({ pageTitle }) {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {pageTitle}
           </Typography>
-          {hasProfile ? (
+          {profiles.length > 0 ? (
             <div>
               <IconButton
                 size="large"
@@ -46,7 +66,7 @@ export default function MenuAppBar({ pageTitle }) {
               >
                 <AccountCircle />
                 <Typography variant="body1" sx={{ ml: 1 }}>
-                  {profiles[0]} {/* Nombre del perfil del primer hijo registrado */}
+                  {perfilActivo ? perfilActivo.nombre : profiles[0].nombre}
                 </Typography>
               </IconButton>
               <Menu
@@ -65,8 +85,8 @@ export default function MenuAppBar({ pageTitle }) {
                 onClose={handleClose}
               >
                 {profiles.map((profile) => (
-                  <MenuItem key={profile} onClick={() => handleProfileChange(profile)}>
-                    {profile}
+                  <MenuItem key={profile.id} onClick={() => handleProfileChange(profile)}>
+                    {profile.nombre}
                   </MenuItem>
                 ))}
                 <MenuItem component={Link} to="/agregar-perfil-hijo" onClick={handleClose}>

@@ -16,7 +16,7 @@ import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import logo from '../assets/logoSoftwareControlSalud-transformed.png';
-import { iniciarSesion } from '../services/api';
+import { iniciarSesion, listarPacientesPorUsuario } from '../services/api';
 import Cookies from 'universal-cookie';
 import md5 from 'crypto-js/md5';
 
@@ -39,19 +39,27 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data) => {
-    console.log("entro al handle submit");
     try {
-      console.log("entro al try del login");
-
       const response = await iniciarSesion(data.email, data.password);
-      console.log(response.Usuario);
-      
+
       if (response && response.Usuario) {
         // Encripta la contraseña
         response.Usuario.contrasena = md5(response.Usuario.contrasena).toString();
 
         // Guarda la información del usuario en cookies
         cookies.set('user', response.Usuario, { path: '/' });
+
+        // Llamar al servicio para obtener los perfiles de los hijos
+        const perfilesResponse = await listarPacientesPorUsuario(response.Usuario.id);
+        if (perfilesResponse && perfilesResponse.Success) {
+          const perfiles = perfilesResponse.Perfiles;
+          cookies.set('perfiles', perfiles, { path: '/' });
+
+          if (perfiles.length > 0) {
+            // Establecer el primer perfil como el perfil activo
+            cookies.set('perfilActivo', perfiles[0], { path: '/' });
+          }
+        }
 
         // Redirige al usuario al Home
         navigate('/');
@@ -60,7 +68,6 @@ export default function LoginPage() {
         throw new Error('Datos de inicio de sesión incorrectos');
       }
     } catch (error) {
-      console.log(error.message);
       setError("Datos de inicio de sesión incorrectos"); // Mensaje de error personalizado
       setOpen(true); // Open the Snackbar
     }
