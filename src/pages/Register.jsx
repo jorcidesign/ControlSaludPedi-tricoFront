@@ -1,61 +1,78 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert from '@mui/material/Alert';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
-import logo from '../assets/logoSoftwareControlSalud-transformed.png';
-import { registrarUsuario } from '../services/api';
-import { transformToWcfDate } from '../utils/helpers';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+// Material-UI Components
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  Link,
+  Grid,
+  Box,
+  Typography,
+  Container,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  FormHelperText,
+  Snackbar,
+  InputAdornment,
+  IconButton,
+  LinearProgress,
+} from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import MuiAlert from "@mui/material/Alert";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+// React Hook Form and Yup
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+// Assets and Services
+import logo from "../assets/logoSoftwareControlSalud-transformed.png";
+import { registrarUsuario } from "../services/api";
+import { transformToWcfDate } from "../utils/helpers";
+import {
+  validationSchema,
+  calculatePasswordStrength,
+} from "../utils/validations"; // Importar esquema de validación
 
 const theme = createTheme();
-
-// Esquema de validación con Yup
-const validationSchema = Yup.object().shape({
-  firstName: Yup.string().required('El nombre es obligatorio'),
-  lastName: Yup.string().required('El apellido es obligatorio'),
-  dni: Yup.string().required('El DNI es obligatorio'),
-  gender: Yup.string().required('El género es obligatorio'),
-  birthDate: Yup.date().required('La fecha de nacimiento es obligatoria'),
-  email: Yup.string().email('El email es inválido').required('El email es obligatorio'),
-  password: Yup.string().required('La contraseña es obligatoria')
-});
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 export default function RegisterPage() {
-  const { handleSubmit, control, formState: { errors } } = useForm({
-    resolver: yupResolver(validationSchema)
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+    watch,
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      birthDate: null,
+    },
   });
+
   const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState('');
-  const [severity, setSeverity] = useState('success');
+  const [message, setMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleMouseDownPassword = (event) => event.preventDefault();
+
   const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
     setOpen(false);
   };
 
+  
   const onSubmit = async (data) => {
     const userData = {
       usuario: {
@@ -66,34 +83,46 @@ export default function RegisterPage() {
           nombre: data.firstName,
           apellido: data.lastName,
           dni: data.dni,
-          genero: data.gender === 'masculino' ? 'M' : 'F',
-          fechaNacimiento: transformToWcfDate(data.birthDate) // Transforma la fecha al formato \/Date(...)\/
-        }
-      }
+          genero: data.gender === "masculino" ? "M" : "F",
+          fechaNacimiento: transformToWcfDate(data.birthDate), // Transforma la fecha al formato \/Date(...)\/
+        },
+      },
     };
-
+  
+    const handleError = (error) => {
+      if (error.message.includes('duplicate key value violates unique constraint "usuarios_email_key"')) {
+        setMessage("Ya existe un usuario registrado con este correo");
+      } else {
+        setMessage(`Error: ${error.message}`);
+      }
+      setSeverity("error");
+      setOpen(true);
+      console.error("Error al enviar la solicitud:", error.message);
+    };
+  
     try {
       const response = await registrarUsuario(userData);
-
+  
       if (response && response.Success) {
-        setMessage('Usuario registrado con éxito. Redirigiendo a la página de inicio de sesión...');
-        setSeverity('success');
+        setMessage("Usuario registrado con éxito. Redirigiendo a la página de inicio de sesión...");
+        setSeverity("success");
         setOpen(true);
-
+  
         // Esperar 1 segundo antes de redirigir
         setTimeout(() => {
-          navigate('/login');
+          navigate("/login");
         }, 1000);
       } else {
-        throw new Error('Datos de registro incorrectos');
+        handleError(new Error(response.Message));
       }
     } catch (error) {
-      setMessage(`Error: ${error.message}`);
-      setSeverity('error');
-      setOpen(true);
-      console.error('Error al enviar la solicitud:', error.message);
+      handleError(error);
     }
   };
+  
+  
+
+  const password = watch("password", "");
 
   return (
     <ThemeProvider theme={theme}>
@@ -102,18 +131,23 @@ export default function RegisterPage() {
         <Box
           sx={{
             marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
           <Avatar sx={{ m: 1, width: 180, height: 180 }}>
-            <img src={logo} alt="logo" style={{ width: '100%' }} />
+            <img src={logo} alt="logo" style={{ width: "100%" }} />
           </Avatar>
           <Typography component="h1" variant="h5">
             Regístrate
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
+          <Box
+            component="form"
+            noValidate
+            onSubmit={handleSubmit(onSubmit)}
+            sx={{ mt: 3 }}
+          >
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <Controller
@@ -127,7 +161,9 @@ export default function RegisterPage() {
                       label="Nombre"
                       autoComplete="given-name"
                       error={!!errors.firstName}
-                      helperText={errors.firstName ? errors.firstName.message : ''}
+                      helperText={
+                        errors.firstName ? errors.firstName.message : ""
+                      }
                     />
                   )}
                 />
@@ -144,7 +180,9 @@ export default function RegisterPage() {
                       label="Apellido"
                       autoComplete="family-name"
                       error={!!errors.lastName}
-                      helperText={errors.lastName ? errors.lastName.message : ''}
+                      helperText={
+                        errors.lastName ? errors.lastName.message : ""
+                      }
                     />
                   )}
                 />
@@ -161,7 +199,7 @@ export default function RegisterPage() {
                       label="DNI"
                       autoComplete="dni"
                       error={!!errors.dni}
-                      helperText={errors.dni ? errors.dni.message : ''}
+                      helperText={errors.dni ? errors.dni.message : ""}
                     />
                   )}
                 />
@@ -185,14 +223,16 @@ export default function RegisterPage() {
                       </Select>
                     )}
                   />
-                  {errors.gender && <p style={{ color: 'red' }}>{errors.gender.message}</p>}
+                  {errors.gender && (
+                    <FormHelperText>{errors.gender.message}</FormHelperText>
+                  )}
                 </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <Controller
                   name="birthDate"
                   control={control}
-                  defaultValue=""
+                  defaultValue={null}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -201,11 +241,14 @@ export default function RegisterPage() {
                       label="Fecha de Nacimiento"
                       InputLabelProps={{ shrink: true }}
                       error={!!errors.birthDate}
-                      helperText={errors.birthDate ? errors.birthDate.message : ''}
+                      helperText={
+                        errors.birthDate ? errors.birthDate.message : ""
+                      }
                     />
                   )}
                 />
               </Grid>
+
               <Grid item xs={12}>
                 <Controller
                   name="email"
@@ -218,7 +261,7 @@ export default function RegisterPage() {
                       label="Email"
                       autoComplete="email"
                       error={!!errors.email}
-                      helperText={errors.email ? errors.email.message : ''}
+                      helperText={errors.email ? errors.email.message : ""}
                     />
                   )}
                 />
@@ -233,12 +276,36 @@ export default function RegisterPage() {
                       {...field}
                       fullWidth
                       label="Contraseña"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       autoComplete="new-password"
                       error={!!errors.password}
-                      helperText={errors.password ? errors.password.message : ''}
+                      helperText={
+                        errors.password ? errors.password.message : ""
+                      }
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                   )}
+                />
+                <LinearProgress
+                  variant="determinate"
+                  value={calculatePasswordStrength(password)}
+                  sx={{ mt: 1 }}
                 />
               </Grid>
             </Grid>
@@ -259,13 +326,17 @@ export default function RegisterPage() {
             </Grid>
           </Box>
         </Box>
-        <Snackbar 
-          open={open} 
-          autoHideDuration={6000} 
-          onClose={handleClose} 
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        <Snackbar
+          open={open}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
         >
-          <Alert onClose={handleClose} severity={severity} sx={{ width: '100%' }}>
+          <Alert
+            onClose={handleClose}
+            severity={severity}
+            sx={{ width: "100%" }}
+          >
             {message}
           </Alert>
         </Snackbar>

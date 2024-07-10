@@ -45,7 +45,7 @@ export default function LoginPage() {
       if (response && response.Usuario) {
         // Encripta la contraseña
         response.Usuario.contrasena = md5(response.Usuario.contrasena).toString();
-
+        console.log(response.Usuario);
         // Guarda la información del usuario en cookies
         cookies.set('user', response.Usuario, { path: '/' });
 

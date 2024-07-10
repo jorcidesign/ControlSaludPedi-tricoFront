@@ -1,3 +1,4 @@
+// src/components/common/Sidebar.jsx
 import * as React from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -16,9 +17,10 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import VaccinesIcon from '@mui/icons-material/Vaccines'; // Importa el ícono de vacuna
 import { Link } from 'react-router-dom';
-import logo from '../../assets/logoSoftwareControlSalud-transformed.png'; // Ajusta la ruta según sea necesario
-import { useLogout } from '../../hooks/useLogout'; // Importa el hook
+import logo from '../../assets/logoSoftwareControlSalud-transformed.png';
+import { useLogout } from '../../hooks/useLogout';
 import Cookies from 'universal-cookie';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
@@ -118,6 +120,14 @@ export default function PermanentDrawerLeft() {
                 <BarChartIcon />
               </ListItemIcon>
               <ListItemText primary="Gráfico IMC" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="Registrar Vacuna" disablePadding> {/* Nuevo ListItem */}
+            <ListItemButton component={Link} to="/registrar-vacuna" onClick={handleProtectedClick}>
+              <ListItemIcon>
+                <VaccinesIcon />
+              </ListItemIcon>
+              <ListItemText primary="Vacunación" />
             </ListItemButton>
           </ListItem>
         </List>

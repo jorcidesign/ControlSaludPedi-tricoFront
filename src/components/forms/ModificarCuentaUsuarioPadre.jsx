@@ -5,11 +5,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Cookies from 'universal-cookie';
+import { useNavigate } from 'react-router-dom';
 import { transformFromWcfDate, transformToWcfDate } from '../../utils/helpers';
 import * as Yup from 'yup';
 import { modificarDatosUsuario } from '../../services/api';
 
-//Validación de Formulario con YUP
+// Validación de Formulario con YUP
 const validationSchema = Yup.object().shape({
   firstName: Yup.string().required('El nombre es obligatorio'),
   lastName: Yup.string().required('El apellido es obligatorio'),
@@ -20,23 +21,24 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required('La contraseña es obligatoria')
 });
 
-//Creación del objeto de alerta 
+// Creación del objeto de alerta 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 export default function ModifyParentAccountForm({ handleSubmit: onSubmit }) {
-  //uso de cookies
+  // Uso de cookies
   const cookies = new Cookies();
+  const navigate = useNavigate();
   const userData = cookies.get('user');
   const { padre } = userData;
 
-  //Mensajes de succes o de error
+  // Mensajes de éxito o de error
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
-  //Pintar en el formulario los datos del usuario padre logueado
+  // Pintar en el formulario los datos del usuario padre logueado
   const defaultValues = {
     firstName: padre.nombre || '',
     lastName: padre.apellido || '',
@@ -47,13 +49,13 @@ export default function ModifyParentAccountForm({ handleSubmit: onSubmit }) {
     password: '', // La contraseña no se debe pre-llenar por razones de seguridad
   };
 
-  //validación de YUP
+  // Validación de YUP
   const { handleSubmit, control, formState: { errors } } = useForm({
     defaultValues,
     resolver: yupResolver(validationSchema)
   });
 
-  //Enviar la data al backend para modificar el usuario Padre
+  // Enviar la data al backend para modificar el usuario Padre
   const handleFormSubmit = async (data) => {
     const updateUser = {
       usuarioId: userData.id,
@@ -72,9 +74,17 @@ export default function ModifyParentAccountForm({ handleSubmit: onSubmit }) {
     try {
       const response = await modificarDatosUsuario(updateUser);
       if (response && response.success) {
+        // Actualizar las cookies
+        cookies.set('user', { ...userData, email: data.email, padre: updateUser.padre }, { path: '/' });
+
         setSnackbarMessage('Datos modificados con éxito');
         setSnackbarSeverity('success');
         setOpenSnackbar(true);
+        
+        // Redirigir al home después de 1 segundo
+        setTimeout(() => {
+          navigate('/');
+        }, 1000);
       } else {
         throw new Error('Error al actualizar los datos');
       }
@@ -86,7 +96,7 @@ export default function ModifyParentAccountForm({ handleSubmit: onSubmit }) {
     }
   };
 
-  //cerrar el mensaje de succes o error presionando la "X"
+  // Cerrar el mensaje de éxito o error presionando la "X"
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
       return;

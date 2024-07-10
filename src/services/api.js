@@ -231,6 +231,117 @@ const agregarRegistroMedico = async (perfilPacienteId, registroMedico) => {
     }
   };
   
+  const agregarVacuna = async (vacunaData) => {
+    try {
+      const response = await fetch(`${API_URL}/AgregarVacuna`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(vacunaData),
+      });
+  
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Something went wrong");
+      }
+  
+      return await response.json();
+    } catch (error) {
+      console.error("Error agregando vacuna:", error.message);
+      throw error;
+    }
+  };
+
+  const obtenerVacunasPorPerfilPaciente = async (perfilPacienteId) => {
+    try {
+      const response = await fetch(`${API_URL}/ObtenerVacunasPorPerfilPaciente`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ PerfilPacienteId: perfilPacienteId }),
+      });
+  
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Something went wrong");
+      }
+  
+      return await response.json();
+    } catch (error) {
+      console.error("Error obteniendo vacunas por perfil paciente:", error.message);
+      throw error;
+    }
+  };
+
+  const eliminarEsquemaVacunacion = async (esquemaVacunacionId) => {
+    try {
+      const response = await fetch(`${API_URL}/EliminarEsquemaVacunacion`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ EsquemaVacunacionId: esquemaVacunacionId }),
+      });
+  
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Something went wrong");
+      }
+  
+      return await response.json();
+    } catch (error) {
+      console.error("Error eliminando esquema de vacunación:", error.message);
+      throw error;
+    }
+  };
+
+  const obtenerNotificacionesPorUsuario = async (usuarioId) => {
+    try {
+      const response = await fetch(`${API_URL}/ObtenerNotificacionesPorUsuario`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Something went wrong");
+      }
+  
+      return await response.json();
+    } catch (error) {
+      console.error("Error obteniendo notificaciones por usuario:", error.message);
+      throw error;
+    }
+  };
+  
+  const agregarNotificacion = async (notificacion) => {
+    try {
+      const response = await fetch(`${API_URL}/AgregarNotificacion`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(notificacion),
+      });
+  
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Something went wrong");
+      }
+  
+      return await response.json();
+    } catch (error) {
+      console.error("Error agregando notificación:", error.message);
+      throw error;
+    }
+  };
+  
+  
+
   export {
     iniciarSesion,
     registrarUsuario,
@@ -242,4 +353,9 @@ const agregarRegistroMedico = async (perfilPacienteId, registroMedico) => {
     agregarRegistroMedico,
     listarRegistroMedicoPorPerfilPaciente,
     eliminarRegistroMedico,
+    agregarVacuna,
+    obtenerVacunasPorPerfilPaciente,
+    eliminarEsquemaVacunacion,
+    obtenerNotificacionesPorUsuario,
+    agregarNotificacion
   };

@@ -1,4 +1,6 @@
-import * as React from 'react';
+// src/components/common/Header.jsx
+
+import React, { useState, useEffect } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -6,22 +8,26 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import { usePerfil } from '../../contexts/PerfilContext';
+import { obtenerNotificacionesPorUsuario } from '../../services/api';
 
 export default function MenuAppBar({ pageTitle }) {
   const drawerWidth = 240;
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [profiles, setProfiles] = React.useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
+  const [profiles, setProfiles] = useState([]);
+  const [notificaciones, setNotificaciones] = useState([]);
   const cookies = new Cookies();
   const { perfilActivo, setPerfilActivo } = usePerfil();
   const navigate = useNavigate();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const user = cookies.get('user');
     const perfiles = cookies.get('perfiles');
     const perfilActivoCookie = cookies.get('perfilActivo');
@@ -32,12 +38,29 @@ export default function MenuAppBar({ pageTitle }) {
     }
   }, [setPerfilActivo]);
 
+  const fetchNotificaciones = async () => {
+    const user = cookies.get('user');
+    if (user && user.id) {
+      const response = await obtenerNotificacionesPorUsuario(user.id);
+      setNotificaciones(response.Notificaciones || []);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotificaciones();
+  }, []);
+
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
+  const handleNotificationMenu = (event) => {
+    setNotificationAnchorEl(event.currentTarget);
+  };
+
   const handleClose = () => {
     setAnchorEl(null);
+    setNotificationAnchorEl(null);
   };
 
   const handleProfileChange = (profile) => {
@@ -54,6 +77,41 @@ export default function MenuAppBar({ pageTitle }) {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {pageTitle}
           </Typography>
+          <IconButton
+            size="large"
+            aria-label="show notifications"
+            aria-controls="notification-menu"
+            aria-haspopup="true"
+            onClick={handleNotificationMenu}
+            color="inherit"
+          >
+            <NotificationsIcon />
+          </IconButton>
+          <Menu
+            id="notification-menu"
+            anchorEl={notificationAnchorEl}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={Boolean(notificationAnchorEl)}
+            onClose={handleClose}
+          >
+            {notificaciones.length > 0 ? (
+              notificaciones.map((notificacion) => (
+                <MenuItem key={notificacion.Id}>
+                  {notificacion.Descripcion}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem>No hay notificaciones</MenuItem>
+            )}
+          </Menu>
           {profiles.length > 0 ? (
             <div>
               <IconButton

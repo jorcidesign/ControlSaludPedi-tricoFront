@@ -1,3 +1,4 @@
+// src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import AgregarPerfilHijo from './pages/AgregarPerfilHijo';
@@ -13,7 +14,8 @@ import PublicRoute from './hooks/PublicRoute';
 import ProtectedRoutePerfil from './hooks/ProtectedRoutePerfil';
 import PublicRoutePerfil from './hooks/PublicRoutePerfil';
 import { PerfilProvider } from './contexts/PerfilContext';
-import NotFoundPage from './pages/NotFoundPage'; // Importa la página 404
+import NotFoundPage from './pages/NotFoundPage';
+import RegistrarVacunaPage from './pages/Vacunas'; // Importar la nueva página
 
 function App() {
   return (
@@ -28,7 +30,8 @@ function App() {
           <Route path="/modificar-perfil-hijo" element={<ProtectedRoutePerfil><ModificarPerfilHijo /></ProtectedRoutePerfil>} />
           <Route path="/peso-talla" element={<ProtectedRoutePerfil><PesoTalla /></ProtectedRoutePerfil>} />
           <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
-          <Route path="*" element={<NotFoundPage />} /> {/* Ruta 404 */}
+          <Route path="/registrar-vacuna" element={<ProtectedRoute><RegistrarVacunaPage /></ProtectedRoute>} /> {/* Nueva ruta */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>
     </PerfilProvider>
