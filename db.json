@@ -1,0 +1,367 @@
+{
+  "padres": [
+    {
+      "id": "1",
+      "nombre": "Juan",
+      "apellido": "Pérez",
+      "dni": "12345678",
+      "genero": "M",
+      "fechaNacimiento": "1980-01-01"
+    },
+    {
+      "id": "2",
+      "nombre": "María",
+      "apellido": "García",
+      "dni": "87654321",
+      "genero": "F",
+      "fechaNacimiento": "1985-02-02"
+    },
+    {
+      "id": "3",
+      "nombre": "Carlos",
+      "apellido": "López",
+      "dni": "11223344",
+      "genero": "M",
+      "fechaNacimiento": "1975-03-03"
+    },
+    {
+      "id": "4",
+      "nombre": "Ana",
+      "apellido": "Martínez",
+      "dni": "44332211",
+      "genero": "F",
+      "fechaNacimiento": "1990-04-04"
+    },
+    {
+      "id": "5",
+      "nombre": "Pedro",
+      "apellido": "Rodríguez",
+      "dni": "55667788",
+      "genero": "M",
+      "fechaNacimiento": "1988-05-05"
+    },
+    {
+      "id": "51ab",
+      "nombre": "Jorge",
+      "apellido": "Del Aguila",
+      "dni": "71819784",
+      "genero": "M",
+      "fechaNacimiento": "/Date(961390800000)/"
+    }
+  ],
+  "usuarios": [
+    {
+      "id": "1",
+      "email": "rodrigolinares912@gmail.com",
+      "contraseña": "password1",
+      "padreId": 1
+    },
+    {
+      "id": "2",
+      "email": "usuario2@example.com",
+      "contraseña": "password2",
+      "padreId": 2
+    },
+    {
+      "id": "3",
+      "email": "usuario3@example.com",
+      "contraseña": "password3",
+      "padreId": 3
+    },
+    {
+      "id": "4",
+      "email": "usuario4@example.com",
+      "contraseña": "password4",
+      "padreId": 4
+    },
+    {
+      "id": "5",
+      "email": "usuario5@example.com",
+      "contraseña": "password5",
+      "padreId": 5
+    },
+    {
+      "id": "0969",
+      "email": "20170456@aloe.ulima.edu.pe",
+      "contraseña": "Tatsumaki123@",
+      "padreId": "51ab"
+    }
+  ],
+  "perfilPacientes": [
+    {
+      "id": "1",
+      "nombre": "Paciente1",
+      "fechaNacimiento": "2010-01-01",
+      "dni": "11111111",
+      "genero": "M",
+      "edadAnios": 14,
+      "edadMeses": 0,
+      "usuarioId": 1
+    },
+    {
+      "id": "2",
+      "nombre": "Paciente2",
+      "fechaNacimiento": "2011-02-02",
+      "dni": "22222222",
+      "genero": "F",
+      "edadAnios": 13,
+      "edadMeses": 0,
+      "usuarioId": 2
+    },
+    {
+      "id": "3",
+      "nombre": "Paciente3",
+      "fechaNacimiento": "2012-03-03",
+      "dni": "33333333",
+      "genero": "M",
+      "edadAnios": 12,
+      "edadMeses": 0,
+      "usuarioId": 3
+    },
+    {
+      "id": "4",
+      "nombre": "Paciente4",
+      "fechaNacimiento": "2013-04-04",
+      "dni": "44444444",
+      "genero": "F",
+      "edadAnios": 11,
+      "edadMeses": 0,
+      "usuarioId": 4
+    },
+    {
+      "id": "5",
+      "nombre": "Paciente5",
+      "fechaNacimiento": "2014-05-05",
+      "dni": "55555555",
+      "genero": "M",
+      "edadAnios": 10,
+      "edadMeses": 0,
+      "usuarioId": 5
+    }
+  ],
+  "registroMedicos": [
+    {
+      "id": "1",
+      "fecha": "2022-01-01",
+      "perfilPacienteId": 1
+    },
+    {
+      "id": "2",
+      "fecha": "2022-02-02",
+      "perfilPacienteId": 2
+    },
+    {
+      "id": "3",
+      "fecha": "2022-03-03",
+      "perfilPacienteId": 3
+    },
+    {
+      "id": "4",
+      "fecha": "2022-04-04",
+      "perfilPacienteId": 4
+    },
+    {
+      "id": "5",
+      "fecha": "2022-05-05",
+      "perfilPacienteId": 5
+    }
+  ],
+  "datosMedicos": [
+    {
+      "id": "1",
+      "peso": 30.5,
+      "talla": 1.2,
+      "registroMedicoId": 1
+    },
+    {
+      "id": "2",
+      "peso": 25.3,
+      "talla": 1.1,
+      "registroMedicoId": 2
+    },
+    {
+      "id": "3",
+      "peso": 28.7,
+      "talla": 1.15,
+      "registroMedicoId": 3
+    },
+    {
+      "id": "4",
+      "peso": 32,
+      "talla": 1.22,
+      "registroMedicoId": 4
+    },
+    {
+      "id": "5",
+      "peso": 27.9,
+      "talla": 1.18,
+      "registroMedicoId": 5
+    }
+  ],
+  "vacunas": [
+    {
+      "id": "1",
+      "nombre": "BCG",
+      "descripcion": "Bacilo de Calmette y Guérin",
+      "status": 0
+    },
+    {
+      "id": "2",
+      "nombre": "Hepatitis B",
+      "descripcion": "Vacuna contra la Hepatitis B",
+      "status": 0
+    },
+    {
+      "id": "3",
+      "nombre": "Pentavalente",
+      "descripcion": "DTP-HB-Hib",
+      "status": 0
+    },
+    {
+      "id": "4",
+      "nombre": "Polio (IPV y OPV)",
+      "descripcion": "Vacuna contra la Polio",
+      "status": 0
+    },
+    {
+      "id": "5",
+      "nombre": "Rotavirus",
+      "descripcion": "Vacuna contra el Rotavirus",
+      "status": 0
+    },
+    {
+      "id": "6",
+      "nombre": "Neumococo",
+      "descripcion": "Vacuna contra el Neumococo",
+      "status": 0
+    },
+    {
+      "id": "7",
+      "nombre": "Influenza",
+      "descripcion": "Vacuna contra la Influenza",
+      "status": 0
+    },
+    {
+      "id": "8",
+      "nombre": "SRP",
+      "descripcion": "Sarampión, Rubéola y Paperas",
+      "status": 0
+    },
+    {
+      "id": "9",
+      "nombre": "Fiebre Amarilla",
+      "descripcion": "Vacuna contra la Fiebre Amarilla",
+      "status": 0
+    },
+    {
+      "id": "10",
+      "nombre": "Varicela",
+      "descripcion": "Vacuna contra la Varicela",
+      "status": 0
+    }
+  ],
+  "esquemaVacunacion": [
+    {
+      "id": "1",
+      "vacunaId": 1,
+      "perfilPacienteId": 1,
+      "fechaAplicacion": "2010-02-01",
+      "estado": 0
+    },
+    {
+      "id": "2",
+      "vacunaId": 2,
+      "perfilPacienteId": 1,
+      "fechaAplicacion": "2010-04-01",
+      "estado": 0
+    },
+    {
+      "id": "3",
+      "vacunaId": 3,
+      "perfilPacienteId": 1,
+      "fechaAplicacion": "2010-06-01",
+      "estado": 0
+    },
+    {
+      "id": "4",
+      "vacunaId": 4,
+      "perfilPacienteId": 2,
+      "fechaAplicacion": "2011-02-01",
+      "estado": 0
+    },
+    {
+      "id": "5",
+      "vacunaId": 5,
+      "perfilPacienteId": 2,
+      "fechaAplicacion": "2011-04-01",
+      "estado": 0
+    },
+    {
+      "id": "6",
+      "vacunaId": 6,
+      "perfilPacienteId": 2,
+      "fechaAplicacion": "2011-06-01",
+      "estado": 0
+    },
+    {
+      "id": "7",
+      "vacunaId": 7,
+      "perfilPacienteId": 3,
+      "fechaAplicacion": "2012-02-01",
+      "estado": 0
+    },
+    {
+      "id": "8",
+      "vacunaId": 8,
+      "perfilPacienteId": 3,
+      "fechaAplicacion": "2012-04-01",
+      "estado": 0
+    },
+    {
+      "id": "9",
+      "vacunaId": 9,
+      "perfilPacienteId": 3,
+      "fechaAplicacion": "2012-06-01",
+      "estado": 0
+    },
+    {
+      "id": "10",
+      "vacunaId": 10,
+      "perfilPacienteId": 4,
+      "fechaAplicacion": "2013-02-01",
+      "estado": 0
+    }
+  ],
+  "notificaciones": [
+    {
+      "id": "1",
+      "usuarioId": 1,
+      "descripcion": "Notificación 1",
+      "fechaHora": "2022-01-01T00:00:00Z"
+    },
+    {
+      "id": "2",
+      "usuarioId": 2,
+      "descripcion": "Notificación 2",
+      "fechaHora": "2022-02-02T00:00:00Z"
+    },
+    {
+      "id": "3",
+      "usuarioId": 3,
+      "descripcion": "Notificación 3",
+      "fechaHora": "2022-03-03T00:00:00Z"
+    },
+    {
+      "id": "4",
+      "usuarioId": 4,
+      "descripcion": "Notificación 4",
+      "fechaHora": "2022-04-04T00:00:00Z"
+    },
+    {
+      "id": "5",
+      "usuarioId": 5,
+      "descripcion": "Notificación 5",
+      "fechaHora": "2022-05-05T00:00:00Z"
+    }
+  ]
+}
